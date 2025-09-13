@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <h1>Test Home</h1>
+    <form action="/create-checkout-session/" method="POST">
+      {% csrf_token %}
+      <button type="submit">Run stripe</button>
+    </form>
+  </body>
+</html>
