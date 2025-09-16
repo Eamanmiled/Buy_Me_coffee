@@ -1,10 +1,18 @@
 <!DOCTYPE html>
 <html>
-  <body>
-    <h1>Test Home</h1>
-    <form action="/create-checkout-session/" method="POST">
-      {% csrf_token %}
-      <button type="submit">Run stripe</button>
-    </form>
+  <head>
+    <title>Buy Me a Coffee</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  </head>
+  <body class="bg-light text-center p-5">
+    <div class="container">
+      <h1 class="mb-4">Buy Me a Coffee!</h1>
+      <form action="/create-checkout-session/" method="POST">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-primary btn-lg">Donate $5</button>
+      </form>
+      <hr class="my-5">
+      <a href="/donations" class="btn btn-outline-secondary">View Donations</a>
+    </div>
   </body>
 </html>

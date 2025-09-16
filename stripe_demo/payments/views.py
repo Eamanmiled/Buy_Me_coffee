@@ -30,3 +30,35 @@ def success(request):
 
 def cancel(request):
     return render(request, "payments/cancel.html")
+
+@csrf_exempt
+def stripe_webhook(request):
+    payload = request.body
+    sig_header = request.META.get('HTTP_STRIPE_SIGNATURE')
+    endpoint_secret = ""  # Need to sort out my CLI stripe to get this working
+
+    try:
+        event = stripe.Webhook.construct_event(
+            payload, sig_header, endpoint_secret
+        )
+    except (ValueError, stripe.error.SignatureVerificationError):
+        return HttpResponse(status=400)
+
+    if event['type'] == 'checkout.session.completed':
+        session = event['data']['object']
+        Payment.objects.update_or_create(
+            session_id=session['id'],
+            defaults={
+                'amount': session['amount_total'],
+                'email': session.get('customer_details', {}).get('email'),
+                'status': 'paid'
+            }
+        )
+
+    return HttpResponse(status=200)
+
+from .models import Payment
+
+def donations(request):
+    payments = Payment.objects.filter(status="paid").order_by('-created_at')
+    return render(request, "payments/donations.html", {"payments": payments})
